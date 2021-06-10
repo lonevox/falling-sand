@@ -128,7 +128,7 @@ impl<'a> World<'a> {
     fn new_empty(size: Size, chunk_size: Size, particle_species: &'static [&'static ParticleSpecies]) -> Self {
         // Create chunks.
         let mut chunks: Vec<Chunk<'a>> = Vec::new();
-        for i in 0..(size.width * size.height) {
+        for _i in 0..(size.width * size.height) {
             let chunk: Chunk<'a> = Chunk::new(chunk_size, Position::from(size));
             chunks.push(chunk);
         }
