@@ -75,8 +75,8 @@ impl<'a> Cell<'a> {
 }
 
 struct Chunk<'a> {
-    /// The world that this chunk exists within.
-    world: &'a World<'a>,
+    /// The size of the chunks in particles.
+    size: Size,
     /// Chunk position within the world (in chunks, not cells).
     position: Position,
     /// The bounding box encompassing the cells of the chunk. This is in world space.
@@ -85,13 +85,13 @@ struct Chunk<'a> {
 }
 
 impl<'a> Chunk<'a> {
-    fn new(&self, world: &'a World<'a>, position: Position) -> Self {
+    fn new(size: Size, position: Position) -> Self {
         Self {
-            world,
+            size,
             position,
             bounds: Rectangle::new(
-                position * Position::from(world.chunk_size),
-                world.chunk_size
+                position * Position::from(size),
+                size
             ),
             cells: Vec::new()
         }
@@ -105,11 +105,10 @@ impl<'a> Chunk<'a> {
         }*/
         for (i, particle) in self.cells.iter().enumerate() {
             if particle.processed { return };
-            let chunk_size = self.world.chunk_size;
             particle.update(
                 ParticleApi {
                     chunk: self,
-                    position: Position::new(i as i32 % chunk_size.width as i32, i as i32 / chunk_size.height as i32),
+                    position: Position::new(i as i32 % self.size.width as i32, i as i32 / self.size.height as i32),
                 }
             );
         }
@@ -119,16 +118,21 @@ impl<'a> Chunk<'a> {
 struct World<'a> {
     /// The size of the world in chunks.
     size: Size,
-    /// The size of the chunks in particles.
-    chunk_size: Size,
     /// The species of particle that can exist within the world.
     particle_species: &'static [&'static ParticleSpecies],
     chunks: Vec<Chunk<'a>>,
 }
 
 impl<'a> World<'a> {
-    fn new(size: Size, chunk_size: Size, particle_species: &'static [&'static ParticleSpecies]) -> Self {
-        Self {size, chunk_size, particle_species, chunks: Vec::new()}
+    fn new_empty(size: Size, chunk_size: Size, particle_species: &'static [&'static ParticleSpecies]) -> Self {
+        // Create chunks.
+        let mut chunks: Vec<Chunk<'a>> = Vec::new();
+        for i in 0..(size.width * size.height) {
+            let chunk: Chunk<'a> = Chunk::new(chunk_size, Position::from(size));
+            chunks.push(chunk);
+        }
+
+        Self {size, particle_species, chunks}
     }
     
     fn generate(generator: &ParticleGenerator) {
@@ -176,7 +180,7 @@ impl<'a> ParticleApi<'a> {
 }
 
 fn main() {
-    let world = World::new(
+    let world = World::new_empty(
         Size::new(10, 10),
         Size::new(64, 64),
         &*particle_species_sets::basic::PARTICLE_SPECIES,
