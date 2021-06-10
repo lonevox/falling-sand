@@ -99,11 +99,6 @@ impl<'a> Chunk<'a> {
     }
     
     fn update(&self) {
-        /*for y in 0..self.world.chunk_height {
-            for x in 0..self.world.chunk_width {
-                let particle = self.get_particle(x, y);
-            }
-        }*/
         for (i, particle) in self.cells.iter().enumerate() {
             if particle.processed { return };
             particle.update(
