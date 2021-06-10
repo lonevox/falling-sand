@@ -179,5 +179,3 @@ impl<'a> ParticleApi<'a> {
         self.chunk.bounds.contains_position(absolute_position)
     }
 }
-
-fn main() {}
