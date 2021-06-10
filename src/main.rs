@@ -93,7 +93,7 @@ impl<'a> Chunk<'a> {
                 position * Position::from(size),
                 size
             ),
-            cells: Vec::new()
+            cells: Vec::new(),
         }
     }
     
