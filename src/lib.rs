@@ -100,7 +100,7 @@ impl<'a> Chunk<'a> {
     
     fn update(&self) {
         for (i, particle) in self.cells.iter().enumerate() {
-            if particle.processed { return };
+            if particle.processed { continue };
             particle.update(
                 ParticleApi {
                     chunk: self,
