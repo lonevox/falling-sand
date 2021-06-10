@@ -1,5 +1,6 @@
 mod grid_util;
-mod particle_species_sets;
+
+#[cfg(test)] mod tests;
 
 use crate::grid_util::*;
 use rand::random;
@@ -179,11 +180,4 @@ impl<'a> ParticleApi<'a> {
     }
 }
 
-fn main() {
-    let world = World::new_empty(
-        Size::new(10, 10),
-        Size::new(64, 64),
-        &*particle_species_sets::basic::PARTICLE_SPECIES,
-    );
-    world.update();
-}
+fn main() {}
